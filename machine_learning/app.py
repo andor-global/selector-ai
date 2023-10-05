@@ -4,6 +4,9 @@ import io
 from PIL import Image
 import style_look_description_generator as prompt_generator
 import style_look_picture_generator as picture_generator
+import imgru
+import google_lenz_api
+import re
 
 def get_pil_image(file):
     file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
@@ -53,4 +56,30 @@ if st.button("Generate"):
     # Display the generated picture
     st.write("Generated Style Look Picture:")
     st.image(style_look_image, use_column_width=True)
+
+    url = imgru.create_url(style_look_image)
+    shopping_df = google_lenz_api.query(url)
+    shopping_df['price'] = shopping_df['price'].apply(lambda x: '$'+re.sub(r'[^0-9.]', '', x))
+    shopping_df = shopping_df.sort_values(by='price')
+
+    st.data_editor(
+        shopping_df,
+        column_config={
+            "pic": st.column_config.ImageColumn(
+                "Preview Image",
+            ),
+            "link": st.column_config.LinkColumn(
+                "Shops",
+            ),
+            "price": st.column_config.NumberColumn(
+                "Price (in USD)",
+                help="The price of the product in USD",
+                min_value=0,
+                max_value=1000,
+                step=1,
+                format="$%d",
+            ),
+        },
+        hide_index=True,
+    )
 
