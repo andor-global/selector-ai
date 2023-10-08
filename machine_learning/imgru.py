@@ -1,12 +1,12 @@
 import base64
 import requests
 from io import BytesIO
-import os
+import streamlit as st
 
 def create_url(image):
     # Set API endpoint and headers
     url = "https://api.imgur.com/3/image"
-    headers = {"Authorization": "Client-ID "+os.environ.get('IMGUR_CLIEND_ID')}
+    headers = {"Authorization": "Client-ID "+st.secrets["imgur_cliend_id"]}
 
     # Read image file and encode as base64
     buffered = BytesIO()

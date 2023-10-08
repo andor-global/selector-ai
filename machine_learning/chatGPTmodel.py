@@ -1,7 +1,7 @@
 import openai
-import os
+import streamlit as st
 
-openai.api_key = os.environ.get('OPEN_AI_API_KEY')
+openai.api_key = st.secrets["open_ai_api_key"]
 
 
 def get_style_look_description(personality_description, references_description, goal):

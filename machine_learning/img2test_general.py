@@ -1,8 +1,8 @@
 import requests
-import os
+import streamlit as st
 
 API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
-headers = {"Authorization": "Bearer "+os.environ.get('HUGGING_FACE_API_KEY')}
+headers = {"Authorization": "Bearer "+st.secrets["hugging_face_api_key"]}
 
 def process_image(image):
     try:

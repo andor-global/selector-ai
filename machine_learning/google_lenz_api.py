@@ -1,13 +1,13 @@
 from serpapi import GoogleSearch
 import pandas as pd
-import os
+import streamlit as st
 
 
 def query(link):
   params = {
     "engine": "google_lens",
     "url": link,
-    "api_key": os.environ.get('GOOGLE_LENZ_API_KEY')
+    "api_key": st.secrets["google_lenz_api_key"]
   }
   search = GoogleSearch(params)
   results = search.get_dict()
