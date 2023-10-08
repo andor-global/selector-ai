@@ -1,12 +1,12 @@
-# Use a pipeline as a high-level helper
-from transformers import pipeline
+import requests
 
-pipe = pipeline("image-to-text", model="Salesforce/blip-image-captioning-large")
+API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
+headers = {"Authorization": "Bearer "}
 
 def process_image(image):
-    text = pipe(image)
     try:
-       image_description = text[0]['generated_text']
+        response = requests.post(API_URL, headers=headers, data=image)
+        answer = response.json()[0]['generated_text']
     except:
-       image_description = ""
-    return image_description
+        answer = ""
+    return answer
