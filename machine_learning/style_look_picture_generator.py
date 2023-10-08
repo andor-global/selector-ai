@@ -1,9 +1,10 @@
 from PIL import Image
 import io
 import requests
+import os
 
 API_URL = "https://api-inference.huggingface.co/models/prompthero/openjourney"
-headers = {"Authorization": "Bearer "}
+headers = {"Authorization": "Bearer "+os.environ(['HUGGING_FACE_API_KEY'])}
 
 def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)

@@ -1,7 +1,8 @@
 import requests
+import os
 
 API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
-headers = {"Authorization": "Bearer "}
+headers = {"Authorization": "Bearer "+os.environ(['HUGGING_FACE_API_KEY'])}
 
 def process_image(image):
     try:

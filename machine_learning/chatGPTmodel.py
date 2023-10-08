@@ -1,6 +1,7 @@
 import openai
+import os
 
-openai.api_key = ''
+openai.api_key = os.environ['OPEN_AI_API_KEY']
 
 
 def get_style_look_description(personality_description, references_description, goal):

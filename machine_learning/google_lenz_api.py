@@ -1,13 +1,13 @@
 from serpapi import GoogleSearch
 import pandas as pd
-
+import os
 
 
 def query(link):
   params = {
     "engine": "google_lens",
     "url": link,
-    "api_key": ""
+    "api_key": os.environ['GOOGLE_LENZ_API_KEY']
   }
   search = GoogleSearch(params)
   results = search.get_dict()
