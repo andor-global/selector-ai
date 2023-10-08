@@ -7,7 +7,7 @@ def query(link):
   params = {
     "engine": "google_lens",
     "url": link,
-    "api_key": os.environ['GOOGLE_LENZ_API_KEY']
+    "api_key": os.environ.get('GOOGLE_LENZ_API_KEY')
   }
   search = GoogleSearch(params)
   results = search.get_dict()

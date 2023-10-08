@@ -4,7 +4,7 @@ import requests
 import os
 
 API_URL = "https://api-inference.huggingface.co/models/prompthero/openjourney"
-headers = {"Authorization": "Bearer "+os.environ(['HUGGING_FACE_API_KEY'])}
+headers = {"Authorization": "Bearer "+os.environ.get('HUGGING_FACE_API_KEY')}
 
 def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
