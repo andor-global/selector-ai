@@ -50,35 +50,40 @@ if st.button("Generate"):
         # Generate style look description and picture
         style_look_description = prompt_generator.generate_style_look_description(personality_description, style_goal, uploaded_files_info)
         style_look_image = picture_generator.generate_style_look_picture(style_look_description)
-    st.success('Generated!')
 
-    # Display the generated picture
-    st.write("Generated Style Look Picture:")
-    st.image(style_look_image, use_column_width=True)
+        if style_look_image == None or style_look_description == "":
+            st.error("Please, generate again!")
+        else:
+            st.success('Generated!')
 
-    url = imgru.create_url(style_look_image)
-    shopping_df = google_lenz_api.query(url)
-    shopping_df['price'] = shopping_df['price'].apply(lambda x: '$'+re.sub(r'[^0-9.]', '', x))
-    shopping_df = shopping_df.sort_values(by='price')
+            # Display the generated picture
+            st.write("Generated Style Look Picture:")
+            st.image(style_look_image, use_column_width=True)
 
-    st.data_editor(
-        shopping_df,
-        column_config={
-            "pic": st.column_config.ImageColumn(
-                "Preview Image",
-            ),
-            "link": st.column_config.LinkColumn(
-                "Shops",
-            ),
-            "price": st.column_config.NumberColumn(
-                "Price (in USD)",
-                help="The price of the product in USD",
-                min_value=0,
-                max_value=1000,
-                step=1,
-                format="$%d",
-            ),
-        },
-        hide_index=True,
-    )
+            url = imgru.create_url(style_look_image)
+            shopping_df = google_lenz_api.query(url)
+
+            st.data_editor(
+                shopping_df,
+                column_config={
+                    "pic": st.column_config.ImageColumn(
+                        "Preview Image",
+                    ),
+                    "link": st.column_config.LinkColumn(
+                        "Shops",
+                    ),
+                    "price": st.column_config.NumberColumn(
+                        "Price (in USD)",
+                        help="The price of the product in USD",
+                        format="%d",
+                    ),
+                    "title": st.column_config.TextColumn(
+                        "Title",
+                    ),
+                    "currency": st.column_config.TextColumn(
+                        "Currency"
+                    )
+                },
+                hide_index=True,
+            )
 
