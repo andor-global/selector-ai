@@ -1,7 +1,7 @@
 from serpapi import GoogleSearch
 import pandas as pd
 import streamlit as st
-
+import re
 
 def query(link):
   params = {
@@ -11,7 +11,6 @@ def query(link):
   }
   search = GoogleSearch(params)
   results = search.get_dict()
-  knowledge_graph = results
   data = parse_api_results(results)
   return data
 
@@ -23,7 +22,11 @@ def parse_api_results(results):
   prices = []
   titles = []
 
-  for item in visual_matches[:10]:
+  for item in visual_matches[:20]:
+    try:
+      prices.append(item['price']['value'])
+    except:
+      continue
     try:
       thumbnails.append(item['thumbnail'])
     except:
@@ -33,21 +36,13 @@ def parse_api_results(results):
     except:
       links.append(None)
     try:
-      prices.append(item['price']['value'])
-    except:
-      prices.append(None)
-    try:
       titles.append(item['title'])
     except:
       titles.append(None)
 
-  data = {'pic': thumbnails, 'title': titles, 'price': prices, 'link': links}
+  currency = [re.search(r'([^\d.]*)', price).group(0) for price in prices]
+  data = {'pic': thumbnails, 'title': titles, 'price': prices, 'currency': currency, 'link': links}
   df = pd.DataFrame(data=data)
+  df["price"] = df["price"].str.replace(r'[^\d.]*', '', regex=True)
+
   return df
-
-
-# Example
-url = 'https://raw.githubusercontent.com/GENLapp/genL/main/1.jpg'
-data = query(url)
-data.to_csv('data.csv')
-print(data)
