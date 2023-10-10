@@ -3,7 +3,7 @@ import io
 import requests
 import streamlit as st
 
-API_URL = "https://api-inference.huggingface.co/models/prompthero/openjourney"
+API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
 headers = {"Authorization": "Bearer "+st.secrets["hugging_face_api_key"]}
 
 def query(payload):
