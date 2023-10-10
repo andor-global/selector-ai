@@ -1,8 +1,8 @@
 from PIL import Image
 
-import img2text_clothes
-import img2test_general
-import llama_model
+import machine_learning.img2text_clothes
+import machine_learning.img2test_general
+import machine_learning.llama_model
 
 def generate_reference_images_description(uploaded_files_info):
     references_descriptions = []
