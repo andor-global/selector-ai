@@ -44,5 +44,4 @@ def parse_api_results(results):
   data = {'pic': thumbnails, 'title': titles, 'price': prices, 'currency': currency, 'link': links}
   df = pd.DataFrame(data=data)
   df["price"] = df["price"].str.replace(r'[^\d.]*', '', regex=True)
-
   return df

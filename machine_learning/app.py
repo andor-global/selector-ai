@@ -8,13 +8,16 @@ import imgru
 import google_lenz_api
 import re
 
+import streamlit as st
+
 def get_pil_image(file):
     file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
     return file_bytes
 
+st.markdown('<a href="https://genl.webflow.io/"><img src="https://i.imgur.com/gW5vqq4.png" width="200"></a>', unsafe_allow_html=True)
 
 # Title of the web app
-st.title("GENL - Generate New Look")
+st.markdown('<h1 style="font-size: 24px;">Generate New Look</h1>', unsafe_allow_html=True)
 
 # Input window for textual description of personality
 personality_description = st.text_area("Enter Textual Description of Personality")
