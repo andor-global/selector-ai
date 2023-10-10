@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 
-API_URL = "https://api-inference.huggingface.co/models/swaroopajit/git-base-fashion"
+API_URL = "https://api-inference.huggingface.co/models/microsoft/git-large-coco"
 headers = {"Authorization": "Bearer "+st.secrets["hugging_face_api_key"]}
 
 def process_image(image):
@@ -11,3 +11,4 @@ def process_image(image):
     except:
         answer = ""
     return answer
+
