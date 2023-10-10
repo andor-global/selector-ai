@@ -2,10 +2,13 @@ import replicate
 import streamlit as st
 import os
 os.environ['REPLICATE_API_TOKEN'] = st.secrets['REPLICATE_API_TOKEN']
-def get_style_look_description(personality_description, references_description, goal):
+def get_style_look_description(age, gender, personality_description, eye_color,\
+            hair_color, extra_info, references_description, goal):
     prompt = f"Given the following description of the personality,\
                please provide a textual description of the style look for the specific goal. Just a set of items, no more.\
-               Personality: {personality_description}. Goal: {goal}. References' images descriptions: {references_description}."
+               Age: {age}. Gengder: {gender}. Eye color: {eye_color}. Hair color: {hair_color}. \
+               Personality: {personality_description}. Extra information: {extra_info}.\
+               Goal: {goal}. References' images descriptions: {references_description}."
 
     output = replicate.run(
         "meta/llama-2-7b-chat:8e6975e5ed6174911a6ff3d60540dfd4844201974602551e10e9e87ab143d81e",
@@ -16,6 +19,5 @@ def get_style_look_description(personality_description, references_description, 
     answer = ""
     for item in output:
         answer += item
-    print(answer)
 
     return answer
