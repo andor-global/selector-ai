@@ -10,12 +10,11 @@ import re
 
 def get_pil_image(file):
     file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
-    pil_image = Image.open(io.BytesIO(file_bytes))
-    return pil_image
+    return file_bytes
 
 
 # Title of the web app
-st.title("Personality Style App")
+st.title("GENL - Generate New Look")
 
 # Input window for textual description of personality
 personality_description = st.text_area("Enter Textual Description of Personality")

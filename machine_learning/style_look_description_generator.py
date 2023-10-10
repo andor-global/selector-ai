@@ -2,7 +2,7 @@ from PIL import Image
 
 import img2text_clothes
 import img2test_general
-import chatGPTmodel
+import llama_model
 
 def generate_reference_images_description(uploaded_files_info):
     references_descriptions = []
@@ -19,7 +19,7 @@ def generate_reference_images_description(uploaded_files_info):
 def generate_style_look_description(personality_description, style_goal, uploaded_files_info):
     references_descriptions = generate_reference_images_description(uploaded_files_info)
     try:
-        style_look_description = chatGPTmodel.get_style_look_description(personality_description, references_descriptions, style_goal)
+        style_look_description = llama_model.get_style_look_description(personality_description, references_descriptions, style_goal)
     except:
         style_look_description = ""
     return style_look_description
