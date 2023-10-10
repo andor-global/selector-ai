@@ -1,14 +1,10 @@
-import streamlit as st
-import numpy as np
 import io
 from PIL import Image
-import style_look_description_generator as prompt_generator
-import style_look_picture_generator as picture_generator
-import imgru
-import google_lenz_api
-import re
-
+import machine_learning.style_look_description_generator as prompt_generator
+import machine_learning.style_look_description_generator as picture_generator
 import streamlit as st
+from machine_learning import imgru, google_lenz_api
+
 
 def get_bytes_image(file):
     file_bytes = bytearray(file.read())
