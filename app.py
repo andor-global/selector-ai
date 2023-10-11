@@ -1,8 +1,8 @@
 import io
 from PIL import Image
-import machine_learning.style_look_description_generator as prompt_generator
-import machine_learning.style_look_description_generator as picture_generator
 import streamlit as st
+import machine_learning.style_look_description_generator as prompt_generator
+import machine_learning.style_look_picture_generator as picture_generator
 from machine_learning import imgru, google_lenz_api
 
 

@@ -11,7 +11,7 @@ def generate_reference_images_description(uploaded_files_info):
         elif file['type'] == 'Moodboard':
             references_descriptions.append("Moodboard:")
             references_descriptions.append(img2test_general.process_image(file['file']))
-
+    print("references_descriptions")
     return ', '.join(references_descriptions)
 
 
@@ -22,7 +22,7 @@ def generate_style_look_description(age, gender, personality_description_input, 
             hair_color, extra_info, references_descriptions, style_goal)
     except:
         style_look_description = ""
-
+    print("style_look_description")
     return style_look_description
 
 

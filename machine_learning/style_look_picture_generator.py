@@ -18,4 +18,5 @@ def generate_style_look_picture(prompt):
         image = Image.open(io.BytesIO(image_bytes))
     except:
         image = None
+    print("pic generated")
     return image
