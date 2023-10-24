@@ -7,6 +7,7 @@ Generate New Look
 - [Overview](#overview)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
+- [Usage](#usage)
 
 ## Overview
 
@@ -18,39 +19,43 @@ That's why we've created a platform you'll want to use every day, to simplify yo
 
 This project follows a specific directory structure:
 
-- `/api`: Contains api design files.
-- `/machine_learning`: Contains machine learning code and notebooks.
-- `requirements.txt`: Python package requirements.
+- `/api`: API for interacting with model
+  - `/db`: Contains db connection and models
+  - `routers`: API routers for handling requests
+- `/machine_learning`: Contains machine learning code and notebooks
+- `/tests`: Automated testing for the model.
+- `requirements.txt`: Python package requirements
 
 ## Getting Started
 
 ```bash
-# Example installation steps
-git clone git@github.com:GENLapp/genL.git
+git clone https://github.com/GENLapp/genL.git
 cd genL
 pip install -r requirements.txt
-# server started at http://127.0.0.1:8000/
 ```
 
-# Run Server
+## Usage
+
+### Run Dev Server
 
 ```bash
 uvicorn api.main:app --reload
+# server started at http://127.0.0.1:8000/
 ```
 
-# Run Model
+### Run Model
 
 ```bash
 # command to only run the model
 ```
 
-# Run Docker
+### Run Docker
 
 ```bash
 # commands to run docker
 ```
 
-# Test the Model
+### Test the Model
 
 ```bash
 # run automated tests for the model
