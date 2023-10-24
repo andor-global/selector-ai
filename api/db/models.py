@@ -1,4 +1,4 @@
-from mongoengine import Document
+from mongoengine import *
 
 
 class User(Document):

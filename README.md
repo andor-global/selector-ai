@@ -29,6 +29,7 @@ This project follows a specific directory structure:
 git clone git@github.com:GENLapp/genL.git
 cd genL
 pip install -r requirements.txt
+# server started at http://127.0.0.1:8000/
 ```
 
 # Run Server
