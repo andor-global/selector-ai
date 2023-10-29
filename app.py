@@ -1,10 +1,25 @@
 import io
-from PIL import Image
 import streamlit as st
-import machine_learning.style_look_description_generator as prompt_generator
-import machine_learning.style_look_picture_generator as picture_generator
+
 from machine_learning import imgru, google_lenz_api
 
+import requests
+from PIL import Image
+from io import BytesIO
+
+from machine_learning.img2text import describe_image
+from machine_learning.llava_model import get_style_look_description
+from machine_learning.segmentation_model import get_clothes_images
+from machine_learning.stable_diffusion_hf import generate_look
+
+
+def get_image_bytes_from_url(url):
+    try:
+        response = requests.get(url)
+        image_bytes = BytesIO(response.content)
+        return image_bytes
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 def get_bytes_image(file):
     file_bytes = bytearray(file.read())
@@ -16,104 +31,118 @@ st.markdown('<a href="https://genl.webflow.io/"><img src="https://i.imgur.com/8H
 st.markdown('<h1 style="font-size: 24px;">Generate New Look</h1>', unsafe_allow_html=True)
 
 # Gender
-gender = st.selectbox("Select Gender", ["Male", "Female", "Non-binary"])
+gender = st.selectbox("Select Gender", ["Female", "Male", "Non-binary"])
 
 # Input form for age
 age = st.selectbox(
     "Select Age Group",
-    ["Infant (0-1 year)", "Toddler (2-4 yrs)", "Child (5-12 yrs)", "Teen (13-19 yrs)", "Adult (20-39 yrs)", "Middle Age Adult (40-59 yrs)", "Senior Adult (60+)"],
+    ["Child (5-12 yrs)", "Teen (13-19 yrs)", "Adult (20-39 yrs)", "Middle Age Adult (40-59 yrs)", "Senior Adult (60+)"],
 )
 
 # Input form for personality description in 3-5 words
 personality_description_example = "Outgoing, Creative, Adventurous"
 personality_description_input = st.text_input("Describe Your Personality (3-5 words)", placeholder =personality_description_example)
+if personality_description_input == '':
+    personality_description_input = personality_description_example
 
 # Input form for hair color
 hair_color_example = "Brown"
 hair_color = st.text_input("Hair Color", placeholder =hair_color_example)
-
-# Input form for eye color
-eye_color_example = "Blue"
-eye_color = st.text_input("Eye Color", placeholder =eye_color_example)
+if hair_color == '':
+    hair_color = hair_color_example
 
 # Input form for any other extra information needed for style
 extra_info_example = "Loves retro fashion, prefers bright colors"
 extra_info = st.text_area("Any Other Extra Information for Your Style", placeholder =extra_info_example)
+if extra_info == '':
+    extra_info = extra_info_example
 
-# Initialize a list to store information about each uploaded picture
-uploaded_files_info = []
+# Initialize variables to store the uploaded files
+clothes_file = None
+moodboard_file = None
 
-# Upload form for reference pictures (moodboard or clothes)
-st.subheader("Upload Reference Pictures")
-uploaded_files = st.file_uploader("Upload one or more reference pictures", accept_multiple_files=True)
+# Upload form for clothes reference
+st.subheader("Clothes")
+clothes_file = st.file_uploader("Upload a clothes reference picture", type=["jpg", "jpeg", "png"], accept_multiple_files=False)
 
-# Create a list of options for picture type (moodboard or clothes)
-picture_types = ["Moodboard", "Clothes"]
+# Process the uploaded files if they exist
+if clothes_file is not None:
+    bytes_image = get_bytes_image(clothes_file)
+    image = Image.open(io.BytesIO(bytes_image))
+    st.image(image, width=70)
 
-# Loop through uploaded pictures and create dropdowns for each
-if uploaded_files:
-    st.write("Specify the type for each uploaded picture:")
-    for file in uploaded_files:
-        # Display filename with larger font and highlighting
-        bytes_image = get_bytes_image(file)
-        image = Image.open(io.BytesIO(bytes_image))
-        st.image(image, width=70)
-        st.markdown(f"**{file.name}**")
-        picture_type = st.selectbox(f"Select type for {file.name}", picture_types)
-        uploaded_files_info.append({"file": bytes_image, "type": picture_type})
+# Upload form for moodboard
+st.subheader("Moodboard")
+moodboard_file = st.file_uploader("Upload a moodboard picture", type=["jpg", "jpeg", "png"], accept_multiple_files=False)
+
+# Process the uploaded files if they exist
+if moodboard_file is not None:
+    bytes_image = get_bytes_image(moodboard_file)
+    image = Image.open(io.BytesIO(bytes_image))
+    st.image(image, width=70)
 
 # Input form for style look goal
 style_goal_example = "Blind Date"
 style_goal = st.text_area("Enter Style Look Goal", placeholder=style_goal_example)
+if style_goal == '':
+    style_goal = style_goal_example
 
 # Process button to generate style look description and picture
 if st.button("Generate"):
-    #st.spinner("Generating...")  # Display a spinner
+    with st.status("Downloading data."):
 
-    #with st.spinner("Generating new look for you..."):
-    with st.status("Downloading data..."):
+        st.write("Gathering all input info...")
+        st.write("Observe moodboard...")
+        moodboard_description = ''#describe_image(moodboard_file)
+        print(moodboard_description)
 
-        st.write("Gathering all input data...")
-        references_descriptions = prompt_generator.generate_reference_images_description(uploaded_files_info)
-        st.write("Gathering style look...")
-        style_look_description = prompt_generator.generate_style_look_description(age, gender, personality_description_input, eye_color,\
-            hair_color, extra_info, style_goal, references_descriptions)
-        st.write("Generating final picture...")
-        style_look_image = picture_generator.generate_style_look_picture(style_look_description)
+        st.write("Analyzing provided info...")
+        style_look_description = 'red dress with black shoes and blask wallet'#get_style_look_description(age, gender, personality_description_input,\
+            #hair_color, extra_info, clothes_file, style_goal, moodboard_description)
+        print("---------")
+        print(style_look_description)
 
-        if style_look_image == None or style_look_description == "":
+        if style_look_description == "":
             st.error("Please, generate again!")
+
         else:
-            st.success('Generated!')
+            st.write("Generating style look....")
+            style_look_image = generate_look(age, gender, hair_color, style_look_description)
 
-            # Display the generated picture
-            st.write("Generated Style Look Picture:")
-            st.image(style_look_image, use_column_width=True)
+            if style_look_image == None:
+                st.error("Please, generate again!")
+            else:
+                st.success('Generated!')
+                st.image(style_look_image, use_column_width=True)
 
-            url = imgru.create_url(style_look_image)
-            shopping_df = google_lenz_api.query(url)
+                # Segment generated image
+                cloth_images, cloth_classes = get_clothes_images(style_look_image)
+                cloth_images_urls = [imgru.create_url(cloth_image) for cloth_image in cloth_images]
 
-            st.data_editor(
-                shopping_df,
-                column_config={
-                    "pic": st.column_config.ImageColumn(
-                        "Preview Image",
-                    ),
-                    "link": st.column_config.LinkColumn(
-                        "Shops",
-                    ),
-                    "price": st.column_config.NumberColumn(
-                        "Price (in USD)",
-                        help="The price of the product in USD",
-                        format="%d",
-                    ),
-                    "title": st.column_config.TextColumn(
-                        "Title",
-                    ),
-                    "currency": st.column_config.TextColumn(
-                        "Currency"
+                for i, url in enumerate(cloth_images_urls):
+                    st.write(cloth_classes[i])
+                    shopping_df = google_lenz_api.query(url)
+
+                    st.data_editor(
+                        shopping_df,
+                        column_config={
+                            "pic": st.column_config.ImageColumn(
+                                "Preview Image",
+                            ),
+                            "link": st.column_config.LinkColumn(
+                                "Shops",
+                            ),
+                            "price": st.column_config.NumberColumn(
+                                "Price (in USD)",
+                                help="The price of the product in USD",
+                                format="%d",
+                            ),
+                            "title": st.column_config.TextColumn(
+                                "Title",
+                            ),
+                            "currency": st.column_config.TextColumn(
+                                "Currency"
+                            )
+                        },
+                        hide_index=True,
                     )
-                },
-                hide_index=True,
-            )
-

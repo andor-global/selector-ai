@@ -10,12 +10,13 @@ def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
     return response.content
 
-def generate_style_look_picture(prompt):
+def generate_look(age, gender, hair_color, style_look_description):
+    prompt = f"Age: {age}. Gengder: {gender}. Hair color: {hair_color}. {style_look_description}"
     image_bytes = query({
         "inputs": prompt,
     })
     try:
-        image = Image.open(io.BytesIO(image_bytes))
+        image = io.BytesIO(image_bytes)
     except:
         image = None
     print("pic generated")
