@@ -7,6 +7,8 @@ Generate New Look
 - [Overview](#overview)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
+  - [Setting up environment in Windows (WSL)](#setting-up-environment-in-windows)
+  - [Docker](#docker)
 - [Usage](#usage)
 
 ## Overview
@@ -28,7 +30,7 @@ This project follows a specific directory structure:
 
 ## Getting Started
 
-### Setting up environment in Windows (WSL)
+### Setting up environment in Windows
 
 - NOTE: Some requirements are only available on Unix based OS. If you are on Windows. either use PyCharm, Docker or WSL.
 - [How to install WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
@@ -40,8 +42,6 @@ $ sudo apt update
 $ sudo apt-get install python3-pip
 $ sudo pip install virtualenv
 ```
-
-###
 
 ```bash
 # after installing wsl start the virtual machine
@@ -55,6 +55,14 @@ $ source ./venv/bin/activate
 $ pip install -r requirements.txt
 $ uvicorn api.main:app --reload
 ```
+
+### Docker
+
+After cloning the repository simply run:
+
+- `docker-compose build`: to build the container
+- `docker-compose up`: to start the container
+- `docker-compose down`: to stop the containcer
 
 ## Usage
 
