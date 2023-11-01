@@ -1,4 +1,4 @@
-# genL
+# genl
 
 Generate New Look
 
@@ -21,17 +21,39 @@ This project follows a specific directory structure:
 
 - `/api`: API for interacting with model
   - `/db`: Contains db connection and models
-  - `routers`: API routers for handling requests
+  - `/routers`: API routers for handling requests
 - `/machine_learning`: Contains machine learning code and notebooks
 - `/tests`: Automated testing for the model.
 - `requirements.txt`: Python package requirements
 
 ## Getting Started
 
+### Setting up environment in Windows (WSL)
+
+- NOTE: Some requirements are only available on Unix based OS. If you are on Windows. either use PyCharm, Docker or WSL.
+- [How to install WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+
+After installing WSL Ubuntu, update the package list, install pip and [virtualenv](https://pypi.org/project/virtualenv/).
+
 ```bash
-git clone https://github.com/GENLapp/genL.git
-cd genL
-pip install -r requirements.txt
+$ sudo apt update
+$ sudo apt-get install python3-pip
+$ sudo pip install virtualenv
+```
+
+###
+
+```bash
+# after installing wsl start the virtual machine
+$ wsl
+$ git clone https://github.com/GENLapp/genl.git
+$ cd genl
+# create virtual environment for python
+$ virtualenv venv
+# enter the virtual environment
+$ source ./venv/bin/activate
+$ pip install -r requirements.txt
+$ uvicorn api.main:app --reload
 ```
 
 ## Usage
@@ -40,19 +62,12 @@ pip install -r requirements.txt
 
 ```bash
 uvicorn api.main:app --reload
-# server started at http://127.0.0.1:8000/
 ```
 
 ### Run Model
 
 ```bash
 # command to only run the model
-```
-
-### Run Docker
-
-```bash
-# commands to run docker
 ```
 
 ### Test the Model
