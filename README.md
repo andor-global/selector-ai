@@ -25,7 +25,8 @@ This project follows a specific directory structure:
   - `/db`: Contains db connection and models
   - `/routers`: API routers for handling requests
 - `/machine_learning`: Contains machine learning code and notebooks
-- `/tests`: Automated testing for the model.
+- `/tests`: Automated testing for the model
+- `app.py`: Entry point for streamlit app
 - `requirements.txt`: Python package requirements
 
 ## Getting Started
