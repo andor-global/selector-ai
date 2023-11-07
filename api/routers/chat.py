@@ -1,18 +1,38 @@
 from fastapi import APIRouter, Depends, File, UploadFile, Form, HTTPException
-from api.middleware import auth_middleware, validate_image
+from pydantic import BaseModel
+from typing import Optional
+from api.middleware import verify_auth, validate_image
 
 router = APIRouter()
 
-router.middleware(auth_middleware)
+router.dependencies.append(Depends(verify_auth))
 
 
-@router.post("/")
-async def send_message(message: str):
-    chat_bot_response = "This is the response from the chat bot."
-    return {"message": chat_bot_response}
+class ChatAnswer(BaseModel):
+    text: Optional[str]
+    img: Optional[str]  # base64_encoded_img_file
 
 
-@router.post("/img/", dependencies=[Depends(validate_image)])
-async def upload_image(image: UploadFile = File(...)):
-    # save_uploaded_image(image)
-    return {"message": f"Image uploaded by user {image.filename}"}
+@router.post("/answers")
+async def submit_answers(answers: list[ChatAnswer], img: str = Depends(validate_image)):
+    for answer in answers:
+        print(answer.text)
+
+    # for image in images:
+    #     try:
+    #         # Decode Base64-encoded image data
+    #         image_data = base64.b64decode(image.data)
+
+    #         # Specify a directory where you want to save the images
+    #         upload_dir = "uploads"
+    #         os.makedirs(upload_dir, exist_ok=True)
+
+    #         # Save the image to the specified directory
+    #         with open(os.path.join(upload_dir, image.filename), "wb") as file:
+    #             file.write(image_data)
+
+    #     except Exception as e:
+    #         raise HTTPException(
+    #             status_code=500, detail=f"Failed to save image {image.filename}: {str(e)}")
+
+    return {"message": "Images uploaded successfully"}

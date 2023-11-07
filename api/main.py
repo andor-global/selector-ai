@@ -1,4 +1,5 @@
 import os
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -7,7 +8,8 @@ from .routers.auth import router as auth_router
 from .routers.model import router as model_router
 from .routers.chat import router as chat_router
 
-connect_to_database()
+if __name__ == "__main__":
+    asyncio.run(connect_to_database())
 
 app = FastAPI()
 
