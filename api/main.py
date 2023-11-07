@@ -1,16 +1,19 @@
 import os
 import asyncio
+from mongoengine import connect
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .db import connect_to_database
 from .routers.auth import router as auth_router
 from .routers.model import router as model_router
 from .routers.chat import router as chat_router
 
-if __name__ == "__main__":
-    asyncio.run(connect_to_database())
+dotenv_path = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), "../.env"))
+load_dotenv(dotenv_path)
+connect(host=os.getenv("DB_CONNECTION"))
 
 app = FastAPI()
 

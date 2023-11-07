@@ -1,11 +1,12 @@
 import os
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel, EmailStr, validator, constr
 from jwt import encode as jwt_encode
 import bcrypt
 from ..models.user import User
 from mongoengine.queryset import DoesNotExist
+from mongoengine.errors import NotUniqueError
 
 router = APIRouter()
 
@@ -18,8 +19,8 @@ class LoginInfo(BaseModel):
 class RegisterInfo(BaseModel):
     name: constr(min_length=3, max_length=256)
     email: EmailStr
-    password: constr(min_length=8)
-    birth_day: constr(regex=r'\d{4}-\d{2}-\d{2}')
+    password: constr(min_length=6)
+    birth_day: date
     sex: str
 
     @validator("password")
@@ -42,11 +43,10 @@ class RegisterInfo(BaseModel):
 @router.post("/login")
 async def handle_login(loginInfo: LoginInfo, response: Response):
     try:
-        user = await User.objects.get(email=loginInfo.email)
-        if bcrypt.checkpw(loginInfo.password.encode('utf-8'), user.password.encode('utf-8')):
+        user = User.objects.get(email=loginInfo.email)
+        if bcrypt.checkpw(loginInfo.password.encode("utf-8"), user.password.encode("utf-8")):
             payload = {
-                "user_id": user.id,
-                "expiration": datetime.now() + timedelta(days=3)
+                "user_id": str(user.id),
             }
 
             token = jwt_encode(payload, os.getenv(
@@ -55,9 +55,10 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
             response.set_cookie(
                 key="auth_token",
                 value=token,
-                samesite='none',
+                samesite="none",
                 httponly=True,
-                secure=True
+                secure=True,
+                expires=3 * 24 * 60 * 60
             )
 
             return {"message": "Successful login"}
@@ -70,28 +71,31 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
 
 @router.post("/register")
 async def handle_register(registerInfo: RegisterInfo, response: Response):
-    user = User(
-        name=registerInfo.name,
-        email=registerInfo.email,
-        password=registerInfo.password,
-        birth_day=registerInfo.birth_day,
-        sex=registerInfo.sex
-    )
+    try:
+        user = User(
+            name=registerInfo.name,
+            email=registerInfo.email,
+            password=registerInfo.password,
+            birth_day=registerInfo.birth_day,
+            sex=registerInfo.sex
+        )
 
-    await user.save()
+        user.save()
 
-    payload = {
-        "user_id": user.id,
-        "expiration": datetime.now() + timedelta(days=3)
-    }
+        payload = {
+            "user_id": str(user.id),
+        }
 
-    token = jwt_encode(payload, os.getenv("JWT_SECRET"), algorithm="HS256")
-    response.set_cookie(
-        key="auth_token",
-        value=token,
-        samesite='none',
-        httponly=True,
-        secure=True
-    )
+        token = jwt_encode(payload, os.getenv("JWT_SECRET"), algorithm="HS256")
+        response.set_cookie(
+            key="auth_token",
+            value=token,
+            samesite="none",
+            httponly=True,
+            secure=True,
+            expires=3 * 24 * 60 * 60
+        )
 
-    return {"message": "Successful registration"}
+        return {"message": "Successful registration"}
+    except NotUniqueError:
+        raise HTTPException(status_code=401, detail="Email already exists")
