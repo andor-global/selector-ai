@@ -1,7 +1,7 @@
 import base64
 import os
-from fastapi import Depends, Request, HTTPException
 from jwt import PyJWTError, decode as jwt_decode
+from fastapi import Depends, Request, HTTPException
 from pydantic import ValidationError
 
 

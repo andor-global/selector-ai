@@ -2,8 +2,9 @@ import os
 import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
-from .db.connection import connect_to_database
+from .db import connect_to_database
 from .routers.auth import router as auth_router
 from .routers.model import router as model_router
 from .routers.chat import router as chat_router
@@ -12,6 +13,8 @@ if __name__ == "__main__":
     asyncio.run(connect_to_database())
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
