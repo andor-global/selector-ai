@@ -11,7 +11,7 @@ def query(payload):
     return response.content
 
 def generate_look(age, gender, hair_color, style_look_description):
-    prompt = f"Age: {age}. Gengder: {gender}. Hair color: {hair_color}. {style_look_description}"
+    prompt = f"Age: {age}. Gender: {gender}. Hair color: {hair_color}. {style_look_description}"
     image_bytes = query({
         "inputs": prompt,
     })
