@@ -22,7 +22,7 @@ That's why we've created a platform you'll want to use every day, to simplify yo
 This project follows a specific directory structure:
 
 - `/api`: API for interacting with model
-  - `/db`: Contains db connection and models
+  - `/models`: Contains the mongodb models and logic
   - `/routers`: API routers for handling requests
 - `/machine_learning`: Contains machine learning code and notebooks
 - `/tests`: Automated testing for the model

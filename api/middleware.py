@@ -1,18 +1,16 @@
 import base64
 import os
-from fastapi import Depends, Request, HTTPException
 from jwt import PyJWTError, decode as jwt_decode
+from fastapi import Depends, Request, HTTPException
 from pydantic import ValidationError
 
 
-async def verify_auth(request: Request, call_next):
+async def verify_auth(request: Request):
     try:
-        token = request.cookies.auth_token
+        token = request.cookies["auth_token"]
         decoded_token = jwt_decode(
             token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
-        request.state.user = decoded_token
-        response = await call_next(request)
-        return response
+        request.state.user_id = decoded_token["user_id"]
     except (PyJWTError, ValidationError):
         raise HTTPException(status_code=403, detail="Token validation failed")
 
