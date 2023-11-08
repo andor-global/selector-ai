@@ -40,7 +40,7 @@ class RegisterInfo(BaseModel):
         return sex
 
 
-@router.post("/login")
+@router.post("/login", responses={401: {"description": "Item not found"}})
 async def handle_login(loginInfo: LoginInfo, response: Response):
     try:
         user = User.objects.get(email=loginInfo.email)
@@ -64,7 +64,7 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
             return {"message": "Successful login"}
         else:
             raise DoesNotExist("Wrong password")
-    except User.DoesNotExist:
+    except DoesNotExist:
         raise HTTPException(
             status_code=401, detail="Email or Password is incorrect")
 

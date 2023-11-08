@@ -6,7 +6,12 @@ from ..models.psycho_type import PsychoType
 
 router = APIRouter()
 
-router.dependencies.append(Depends(verify_auth))
+# router.dependencies.append(Depends(verify_auth))
+
+
+@router.get("/questions")
+async def get_questions():
+    pass
 
 
 @router.post("/answers")

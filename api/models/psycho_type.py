@@ -84,4 +84,4 @@ class PsychoType(Document):
     def to_string(self):
         values = [value for key, value in self._data.items()]
         zipped_list = zip(questions, values)
-        return "\n".join([f"{item[0]}\n{item[1]}" for item in zipped_list])
+        return "\n".join([f"question:{item[0]}\nanswer:{item[1]}" for item in zipped_list])
