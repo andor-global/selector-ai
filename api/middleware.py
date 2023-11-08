@@ -11,7 +11,7 @@ async def verify_auth(request: Request):
         decoded_token = jwt_decode(
             token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
         request.state.user_id = decoded_token["user_id"]
-    except (PyJWTError, ValidationError):
+    except (PyJWTError, ValidationError, KeyError):
         raise HTTPException(status_code=403, detail="Token validation failed")
 
 

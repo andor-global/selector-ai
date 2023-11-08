@@ -1,5 +1,6 @@
 from mongoengine import *
 from mongoengine import signals
+import json
 from enum import Enum
 from typing import Union
 import bcrypt
@@ -23,6 +24,13 @@ class User(Document):
     sex = EnumField(Sex)
     psycho_type = EnumField(PsychoType)
     style_goal = StringField()
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
 
 
 def hash_password(sender, document):
