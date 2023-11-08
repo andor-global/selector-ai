@@ -1,0 +1,38 @@
+question: Beauty – convenience – quality (prioritize)
+answer: covenience, beauty, quality
+question: Describe your favorite thing
+answer: my laptop
+question: do you like shopping?
+answer: i like but I'm getting tired fast because of trying on and crowd
+question: Shopping style - how do you do it? Favorite stores?
+answer: when i really need smt or i just have a mood to buy something 
+question: What is the order (clutter) in the wardrobe?
+answer: cool order, i loke to see what I have to use my clothes effectively
+question: How much care does the clothing require? Do you like to take care of your clothes?
+answer:don't like it, prefer to ask somebody to help, some service
+question: Favorite color? Textile?
+answer: i like soft textile and black color, blue, pink
+question: Prints in your wardrobe - what and how many of them?
+answer: don't have any prints, like monotone colors
+question: Jewelry in your wardrobe – what and how many of them?
+answer: little, rare 
+question: Makeup – what do you usually do?
+answer: just make skin color healty and that's it
+question: Do you have a lot of shoes and do you wear heels?
+answer: i prefer comfortable shoes, i have only one pait with middle heels, i like how it looks like but I can't wear it dur to inconvenience
+question: How often do you change your hairstyles and hair color?
+answer: rare
+question: Are you so comfortable or does this outfit depend on the circumstances?
+answer: just feel comportable, i like my natural color and want to have long slightly curly hairs
+question: Are you a fan of noisy parties, holidays, or social events? If you need to go, how will you behave?
+answer: I like dancing during the parties, I don't like speaking and drinking, I like to be among happy people, usually I prefer no to stay at afterparty, I like social holidays; If i need to go, I just say buy and smile
+question: What is your dream car?
+answer: bicycle or tesla
+question: How did you study at school? What sports sections did you attend and why?
+answer: not bad, didn't like sport but now I'm 27 years old and I like doing sport at gym, learning how to stay on hands
+question: What do you do? Is there a dress code? Do you like this job?
+answer: I'm a data scientist, no dress-code, I like my job
+question: What impression do you want to make?
+answer: independent, kind, can help if sombody ask
+question:  What is your lifestyle or schedule (business trips, receptions, lots of sports, travel, nightlife)?
+answer:i like trips! sport! walking and looking at the poople 
