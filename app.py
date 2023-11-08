@@ -93,12 +93,12 @@ if st.button("Generate"):
 
         st.write("Gathering all input info...")
         st.write("Observe moodboard...")
-        moodboard_description = ''#describe_image(moodboard_file)
+        moodboard_description = describe_image(moodboard_file)
         print(moodboard_description)
 
         st.write("Analyzing provided info...")
-        style_look_description = 'red dress with black shoes and blask wallet'#get_style_look_description(age, gender, personality_description_input,\
-            #hair_color, extra_info, clothes_file, style_goal, moodboard_description)
+        style_look_description = get_style_look_description(age, gender, personality_description_input,\
+            hair_color, extra_info, clothes_file, style_goal, moodboard_description)
         print("---------")
         print(style_look_description)
 
