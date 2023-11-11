@@ -1,26 +1,29 @@
 from mongoengine import *
 
-questions = [
-    "Beauty - convenience - quality (prioritize)",
-    "Describe your favorite thing",
-    "Do you like shopping?",
-    "Shopping style - how do you do it? Favorite stores?",
-    "What is the order (clutter) in the wardrobe?",
-    "How much care does the clothing require? Do you like to take care of your clothes?",
-    "Favorite color? Textile?",
-    "Prints in your wardrobe - what and how many of them?",
-    "Jewelry in your wardrobe - what and how many of them?",
-    "Makeup - what do you usually do?",
-    "Do you have a lot of shoes and do you wear heels?",
-    "How often do you change your hairstyles and hair color?",
-    "Are you so comfortable or does this outfit depend on the circumstances?",
-    "Are you a fan of noisy parties, holidays, or social events? If you need to go, how will you behave?",
-    "What is your dream car?",
-    "How did you study at school? What sports sections did you attend and why?",
-    "What do you do? Is there a dress code? Do you like this job?",
-    "What impression do you want to make?",
-    "What is your lifestyle or schedule (business trips, receptions, lots of sports, travel, nightlife)?"
-]
+
+def get_questions_list() -> list[str]:
+    questions = [
+        "Beauty - convenience - quality (prioritize)",
+        "Describe your favorite thing",
+        "Do you like shopping?",
+        "Shopping style - how do you do it? Favorite stores?",
+        "What is the order (clutter) in the wardrobe?",
+        "How much care does the clothing require? Do you like to take care of your clothes?",
+        "Favorite color? Textile?",
+        "Prints in your wardrobe - what and how many of them?",
+        "Jewelry in your wardrobe - what and how many of them?",
+        "Makeup - what do you usually do?",
+        "Do you have a lot of shoes and do you wear heels?",
+        "How often do you change your hairstyles and hair color?",
+        "Are you so comfortable or does this outfit depend on the circumstances?",
+        "Are you a fan of noisy parties, holidays, or social events? If you need to go, how will you behave?",
+        "What is your dream car?",
+        "How did you study at school? What sports sections did you attend and why?",
+        "What do you do? Is there a dress code? Do you like this job?",
+        "What impression do you want to make?",
+        "What is your lifestyle or schedule (business trips, receptions, lots of sports, travel, nightlife)?"
+    ]
+    return questions
 
 
 class PsychoType(Document):

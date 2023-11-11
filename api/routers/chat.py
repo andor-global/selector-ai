@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request, File, UploadFile, Form, HTTPExc
 from pydantic import BaseModel
 from typing import Optional
 from api.middleware import verify_auth, validate_image
-from ..models.psycho_type import PsychoType
+from ..models.psycho_type import PsychoType, get_questions_list
 
 router = APIRouter()
 
@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/questions")
 async def get_questions():
-    pass
+    return get_questions_list()
 
 
 @router.post("/answers")
