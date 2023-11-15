@@ -1,4 +1,5 @@
 from mongoengine import *
+from user import User
 
 
 def get_questions_list() -> list[str]:
@@ -27,6 +28,8 @@ def get_questions_list() -> list[str]:
 
 
 class PsychoType(Document):
+    user = ReferenceField(User)
+
     # 1. Beauty – convenience – quality (prioritize)
     beauty_convenience_quality = StringField()
 
@@ -84,7 +87,7 @@ class PsychoType(Document):
     # 19. What is your lifestyle or schedule (business trips, receptions, lots of sports, travel, nightlife)?
     lifestyle_schedule = StringField()
 
-    def to_string(self):
+    def to_string(self) -> str:
         values = [value for key, value in self._data.items()]
-        zipped_list = zip(questions, values)
+        zipped_list = zip(get_questions_list(), values)
         return "\n".join([f"question:{item[0]}\nanswer:{item[1]}" for item in zipped_list])

@@ -43,7 +43,7 @@ class RegisterInfo(BaseModel):
 @router.post("/login", responses={401: {"description": "Item not found"}})
 async def handle_login(loginInfo: LoginInfo, response: Response):
     try:
-        user = User.objects.get(email=loginInfo.email)
+        user = await User.objects.get(email=loginInfo.email)
         if bcrypt.checkpw(loginInfo.password.encode("utf-8"), user.password.encode("utf-8")):
             payload = {
                 "user_id": str(user.id),
@@ -72,7 +72,7 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
 @router.post("/register")
 async def handle_register(registerInfo: RegisterInfo, response: Response):
     try:
-        user = User(
+        user = await User(
             name=registerInfo.name,
             email=registerInfo.email,
             password=registerInfo.password,

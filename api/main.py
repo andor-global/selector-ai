@@ -2,6 +2,7 @@ import os
 import asyncio
 from mongoengine import connect
 from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -14,9 +15,12 @@ from .routers.user import router as user_router
 dotenv_path = os.path.abspath(os.path.join(
     os.path.dirname(__file__), "../.env"))
 load_dotenv(dotenv_path)
-connect(host=os.getenv("DB_CONNECTION"))
+
 
 app = FastAPI()
+
+app.db = AsyncIOMotorClient(os.getenv("DB_CONNECTION"))
+connect(host=os.getenv("DB_CONNECTION"))
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

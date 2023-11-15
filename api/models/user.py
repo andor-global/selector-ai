@@ -1,8 +1,8 @@
 from mongoengine import *
 from mongoengine import signals
-import json
+from datetime import datetime
 from enum import Enum
-from typing import Union
+from bson import ObjectId
 import bcrypt
 
 
@@ -25,12 +25,14 @@ class User(Document):
     psycho_type = EnumField(PsychoType)
     style_goal = StringField()
 
+    def get_age(self) -> int:
+        today = datetime.utcnow()
+        age = today.year - self.birth_day.year - ((today.month, today.day) < (self.birth_day.month, self.birth_day.day))
+        return age
 
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)
+    @staticmethod
+    def get_user_by_id(id: str):
+        return User.objects.exclude('password').get(id=ObjectId(id))
 
 
 def hash_password(sender, document):
