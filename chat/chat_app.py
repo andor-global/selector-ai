@@ -4,7 +4,7 @@ import requests
 
 os.environ["REPLICATE_API_TOKEN"] = st.secrets['REPLICATE_API_TOKEN']
 
-from langchain.prompts import PromptTemplate
+from langchain.prompts import PromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 # llm_prompt = PromptTemplate.from_template(
 # )
 
@@ -12,11 +12,20 @@ from langchain.memory import ConversationBufferMemory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
 
+template="You are experineced personal stylist. Given the following description of the personality, \
+please provide a textual description of the style look for the specific goal. Just a set of items, no more. "
+system_message_prompt = SystemMessagePromptTemplate.from_template(template)
+human_template="Age: {age}. Gengder: {gender}. \
+                Psychotype description: {psychotype_description}.\
+                Please, take into account additional info: {text}"
+human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
+
 llm_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are experineced personal stylist. Please, describe appropriate style look taking into account that info: "),
+        system_message_prompt,
         MessagesPlaceholder(variable_name="history"),
-        ("human", "{text}"),
+        human_message_prompt
     ]
 )
 
@@ -35,7 +44,6 @@ llm_chain = (
     | llm
 )
 
-
 image_prompt = PromptTemplate(
     input_variables=["style look description"],
     template="{style look description}",
@@ -43,18 +51,24 @@ image_prompt = PromptTemplate(
 text2image = Replicate(model="stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b")
 
 from langchain.schema.runnable import RunnablePassthrough
-# llm_chain = llm_prompt | llm
+
 image_chain = image_prompt | text2image
+
 final_chain = {"style look description": llm_chain} | RunnablePassthrough.assign(image=image_chain)
 
 from PIL import Image
 import io
 
+# hard code user info
+gender = 'female'
+age = '27'
+psychotype_description = 'dramatic'
+
 while(True):
     user_input = input('user: ')
 
     # run the chain
-    chain_output = final_chain.invoke({'text': user_input})
+    chain_output = final_chain.invoke({'text': user_input, 'gender': gender, 'age': age, 'psychotype_description': psychotype_description})
 
     # parse the output
     style_look_description = chain_output['style look description']
