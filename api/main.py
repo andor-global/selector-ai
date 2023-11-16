@@ -1,5 +1,4 @@
 import os
-import asyncio
 from mongoengine import connect
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -37,7 +36,7 @@ app.include_router(auth_router, prefix="/api/auth")
 app.include_router(chat_router, prefix="/api/chat")
 app.include_router(user_router, prefix="/api/user")
 
-app.include_router(ws_router, "/ws")
+app.include_router(ws_router, prefix="/ws")
 
 
 @app.get("/")
