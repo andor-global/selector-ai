@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, Request, File, UploadFile, Form, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from api.middleware import verify_auth, validate_image
+from api.middleware import validate_http_auth
 from psychotype.psychotype import detect_psychotype
 from ..models.psycho_type import PsychoType, get_questions_list
 from ..models.user import User
 
 router = APIRouter()
 
-router.dependencies.append(Depends(verify_auth))
+router.dependencies.append(Depends(validate_http_auth))
 
 
 @router.get("/questions")

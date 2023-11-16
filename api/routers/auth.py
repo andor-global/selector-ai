@@ -56,7 +56,6 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
                 key="auth_token",
                 value=token,
                 samesite="none",
-                httponly=True,
                 secure=True,
                 expires=3 * 24 * 60 * 60
             )
@@ -91,7 +90,6 @@ async def handle_register(registerInfo: RegisterInfo, response: Response):
             key="auth_token",
             value=token,
             samesite="none",
-            httponly=True,
             secure=True,
             expires=3 * 24 * 60 * 60
         )

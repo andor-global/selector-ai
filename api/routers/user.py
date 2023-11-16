@@ -2,11 +2,11 @@ from mongoengine import Document
 import json
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, Request, Depends
-from ..middleware import verify_auth
+from ..middleware import validate_http_auth
 
 router = APIRouter()
 
-router.dependencies.append(Depends(verify_auth))
+router.dependencies.append(Depends(validate_http_auth))
 
 
 @router.get('/')

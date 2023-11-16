@@ -1,5 +1,5 @@
 from mongoengine import *
-from user import User
+from .user import User
 
 
 def get_questions_list() -> list[str]:
