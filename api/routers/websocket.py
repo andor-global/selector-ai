@@ -1,7 +1,7 @@
 import asyncio
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from websockets.exceptions import ConnectionClosed
-from api.models.user import User
+from ..models.user import User
 from ..middleware import validate_websocket_auth
 
 router = APIRouter()
@@ -11,7 +11,7 @@ router = APIRouter()
 async def websocket_endpoint(websocket: WebSocket, user_id: str = Depends(validate_websocket_auth)):
     await websocket.accept()
     try:
-        user = await User.get_user_by_id(user_id)
+        user = await User.find_one({'_id': user_id})
         send_images_task = asyncio.create_task(send_generated_images(websocket))
 
         while True:

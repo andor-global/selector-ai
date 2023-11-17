@@ -1,12 +1,10 @@
 import os
-from datetime import date, datetime, timedelta
+import bcrypt
+from datetime import date
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel, EmailStr, validator, constr
 from jwt import encode as jwt_encode
-import bcrypt
 from ..models.user import User
-from mongoengine.queryset import DoesNotExist
-from mongoengine.errors import NotUniqueError
 
 router = APIRouter()
 
@@ -40,10 +38,14 @@ class RegisterInfo(BaseModel):
         return sex
 
 
-@router.post("/login", responses={401: {"description": "Item not found"}})
+@router.post("/login")
 async def handle_login(loginInfo: LoginInfo, response: Response):
     try:
-        user = await User.objects.get(email=loginInfo.email)
+        user = await User.find_one({'email': loginInfo.email})
+
+        if not user:
+            raise Exception("Email doesn't exist")
+
         if bcrypt.checkpw(loginInfo.password.encode("utf-8"), user.password.encode("utf-8")):
             payload = {
                 "user_id": str(user.id),
@@ -62,8 +64,8 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
 
             return {"message": "Successful login"}
         else:
-            raise DoesNotExist("Wrong password")
-    except DoesNotExist:
+            raise Exception("Wrong password")
+    except Exception:
         raise HTTPException(
             status_code=401, detail="Email or Password is incorrect")
 
@@ -71,10 +73,17 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
 @router.post("/register")
 async def handle_register(registerInfo: RegisterInfo, response: Response):
     try:
+        user = await User.find_one({"email": registerInfo.email})
+
+        if user:
+            raise Exception("User exists")
+
+        hashed_password = bcrypt.hashpw(registerInfo.password.encode('utf-8'), bcrypt.gensalt())
+
         user = await User(
             name=registerInfo.name,
             email=registerInfo.email,
-            password=registerInfo.password,
+            password=hashed_password.decode('utf-8'),
             birth_day=registerInfo.birth_day,
             sex=registerInfo.sex
         )
@@ -95,5 +104,5 @@ async def handle_register(registerInfo: RegisterInfo, response: Response):
         )
 
         return {"message": "Successful registration"}
-    except NotUniqueError:
+    except Exception:
         raise HTTPException(status_code=401, detail="Email already exists")
