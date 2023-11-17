@@ -1,10 +1,10 @@
 from PIL import Image
 import requests
 import os
-import streamlit as st
 from chat.chain import create_chain
 from chat.memory import create_memory
 import io
+
 
 def chat(user_profile_info, memory_state={}):
     """
@@ -60,6 +60,7 @@ def chat(user_profile_info, memory_state={}):
 
         # Save the image locally
         image.save("images\image.jpg")
+
 
 # Example Usage:
 user_profile_info = {'gender': 'female', 'age': '27', 'psychotype_description': 'dramatic'}
