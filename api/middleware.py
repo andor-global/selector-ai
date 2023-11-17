@@ -1,27 +1,22 @@
-import base64
 import os
 from jwt import PyJWTError, decode as jwt_decode
-from fastapi import Depends, Request, HTTPException
+from fastapi import Query, Request, HTTPException, WebSocketException
 from pydantic import ValidationError
 
 
-async def verify_auth(request: Request):
+async def validate_websocket_auth(auth_token: str = Query(...)) -> str:
+    try:
+        decoded_token = jwt_decode(auth_token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
+        return decoded_token["user_id"]
+    except (PyJWTError, ValidationError, KeyError):
+        raise WebSocketException(status_code=403, detail="Auth token validation failed")
+
+
+async def validate_http_auth(request: Request):
     try:
         token = request.cookies["auth_token"]
         decoded_token = jwt_decode(
             token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
         request.state.user_id = decoded_token["user_id"]
     except (PyJWTError, ValidationError, KeyError):
-        raise HTTPException(status_code=403, detail="Token validation failed")
-
-
-async def validate_image(img: str):
-    if img is not None and img.startswith("data:image/"):
-        data, encoded_data = img.split(",", 1)
-        decoded_data = base64.b64decode(encoded_data)
-
-        max_image_size = 1024
-        if len(decoded_data) > max_image_size:
-            raise HTTPException(
-                status_code=400, detail="Image size exceeds the limit")
-    return img
+        raise HTTPException(status_code=403, detail="Auth token validation failed")
