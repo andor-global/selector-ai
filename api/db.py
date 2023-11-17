@@ -1,12 +1,12 @@
 import os
+from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from beanie import init_beanie
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from .psycho_type import PsychoType
-from .user import User
+from .models.psycho_type import PsychoType
+from .models.user import User
 
 dotenv_path = os.path.abspath(os.path.join(
     os.path.dirname(__file__), "../.env"))
@@ -15,8 +15,10 @@ load_dotenv(dotenv_path)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.db = AsyncIOMotorClient(os.getenv("DB_CONNECTION")).test
+    client = AsyncIOMotorClient(os.getenv("DB_CONNECTION"))
+    app.db = client[os.getenv("DB_NAME")]
     await init_beanie(app.db, document_models=[User, PsychoType])
-    print("Startup complete")
+    print("Connected to database")
     yield
-    print("Shutdown complete")
+    client.close()
+    print("Closed database connection")

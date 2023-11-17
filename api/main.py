@@ -1,5 +1,4 @@
 import os
-from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -8,7 +7,7 @@ from .routers.auth import router as auth_router
 from .routers.chat import router as chat_router
 from .routers.user import router as user_router
 from .routers.websocket import router as ws_router
-from .models.db import lifespan
+from .db import lifespan
 
 app = FastAPI(lifespan=lifespan)
 
