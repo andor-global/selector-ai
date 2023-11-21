@@ -1,11 +1,12 @@
+from pathlib import Path
 from machine_learning import llama_model
 import json
 
 
 def load_psychotypes_data():
-    with open('psychotypes.json', 'r') as file:
+    with open(Path("./psychotype/psychotypes.json"), 'r') as file:
         data = json.load(file)
-    return data
+        return data
 
 
 def extract_psychotypes_description(data, gender):
@@ -15,7 +16,7 @@ def extract_psychotypes_description(data, gender):
     return '; '.join(descriptions)
 
 
-def detect_psychotype(answers: list[str], gender: str, age: int):
+def detect_psychotype(answers: str, gender: str, age: int):
     psychotypes_data = load_psychotypes_data()
     psychotype_descriptions = extract_psychotypes_description(psychotypes_data, gender)
 
@@ -26,9 +27,3 @@ def detect_psychotype(answers: list[str], gender: str, age: int):
     prompt = answers
     model_answer = llama_model.query(prompt, system_prompt)
     return model_answer
-
-
-def read_file_to_string(file_path):
-    with open(file_path, 'r') as file:
-        data = file.read()
-    return data

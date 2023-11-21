@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
-from bson import ObjectId
 
 from api.middleware import validate_http_auth
 from psychotype.psychotype import detect_psychotype
@@ -21,17 +20,18 @@ async def submit_answers(request: Request, answers: list[str]):
     if len(answers) != 19:
         raise HTTPException(status_code=401, detail="haven't answered all questions")
 
-    user = await User.get(ObjectId(request.state.user_id))
+    user = await User.get(request.state.user_id)
 
-    fields = list(PsychoType.model_dump().keys())
     psychoType = PsychoType(user=user)
+    fields = list(psychoType.model_dump().keys())[2:]
 
     for i in range(len(answers)):
-        psychoType[fields[i + 1]] = answers[i]
+        setattr(psychoType, fields[i], answers[i])
 
-    psychoType.save()
+    await psychoType.save()
 
-    user.psycho_type = detect_psychotype(answers, user.sex, user.get_age())
-    user.save()
+    detected_type = detect_psychotype(psychoType.to_string(), user.sex, user.get_age())
+    user.psycho_type = detected_type
+    await user.save()
 
-    return {"message": "Successful"}
+    return {"message": detected_type}

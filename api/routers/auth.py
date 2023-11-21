@@ -72,37 +72,35 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
 
 @router.post("/register")
 async def handle_register(registerInfo: RegisterInfo, response: Response):
-    try:
-        user = await User.find_one({"email": registerInfo.email})
+    user = await User.find_one({"email": registerInfo.email})
 
-        if user:
-            raise Exception("User exists")
-
-        hashed_password = bcrypt.hashpw(registerInfo.password.encode('utf-8'), bcrypt.gensalt())
-
-        user = await User(
-            name=registerInfo.name,
-            email=registerInfo.email,
-            password=hashed_password.decode('utf-8'),
-            birth_day=registerInfo.birth_day,
-            sex=registerInfo.sex
-        )
-
-        user.save()
-
-        payload = {
-            "user_id": str(user.id),
-        }
-
-        token = jwt_encode(payload, os.getenv("JWT_SECRET"), algorithm="HS256")
-        response.set_cookie(
-            key="auth_token",
-            value=token,
-            samesite="none",
-            secure=True,
-            expires=3 * 24 * 60 * 60
-        )
-
-        return {"message": "Successful registration"}
-    except Exception:
+    if user != None:
         raise HTTPException(status_code=401, detail="Email already exists")
+
+    hashed_password = bcrypt.hashpw(registerInfo.password.encode('utf-8'), bcrypt.gensalt())
+
+    user = User(
+        name=registerInfo.name,
+        email=registerInfo.email,
+        password=hashed_password.decode('utf-8'),
+        birth_day=registerInfo.birth_day,
+        sex=registerInfo.sex,
+        psycho_type=None
+    )
+
+    await user.save()
+
+    payload = {
+        "user_id": str(user.id),
+    }
+
+    token = jwt_encode(payload, os.getenv("JWT_SECRET"), algorithm="HS256")
+    response.set_cookie(
+        key="auth_token",
+        value=token,
+        samesite="none",
+        secure=True,
+        expires=3 * 24 * 60 * 60
+    )
+
+    return {"message": "Successful registration"}

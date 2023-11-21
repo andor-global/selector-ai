@@ -1,5 +1,9 @@
 from datetime import datetime
 from enum import Enum, auto
+import json
+import os
+from pathlib import Path
+from typing import Optional
 from beanie import Document, Indexed
 
 
@@ -8,14 +12,14 @@ class Sex(str, Enum):
     Female = "female"
 
 
-class PsychoType(Enum):
-    Classical = auto()
-    Expressive = auto()
-    Dramatic = auto()
-    Spectacular = auto()
-    Romantic = auto()
-    Natural = auto()
-    Gamine = auto()
+class PsychoType(str, Enum):
+    Classical = "classical"
+    Expressive = "expressive"
+    Dramatic = "dramatic"
+    Spectacular = "spectacular"
+    Romantic = "romantic"
+    Natural = "natural"
+    Gamine = "gamine"
 
 
 class User(Document):
@@ -24,9 +28,15 @@ class User(Document):
     password: str
     birth_day: datetime
     sex: Sex
-    psycho_type: PsychoType
+    psycho_type: Optional[str] = ''
 
     def get_age(self) -> int:
         today = datetime.utcnow()
         age = today.year - self.birth_day.year - ((today.month, today.day) < (self.birth_day.month, self.birth_day.day))
         return age
+
+    def get_psychotype_info(self) -> dict:
+        path = Path(__file__).resolve().parent / Path("../../psychotype/psychotypes.json")
+        with open(path, 'r') as file:
+            data = json.load(file)
+            return data[self.sex][self.psycho_type]
