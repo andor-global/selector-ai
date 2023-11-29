@@ -1,4 +1,4 @@
-question: Beauty – convenience – quality (prioritize)
+question: Beauty convenience quality (prioritize)
 answer: covenience, beauty, quality
 question: Describe your favorite thing
 answer: my laptop
@@ -14,9 +14,9 @@ question: Favorite color? Textile?
 answer: i like soft textile and black color, blue, pink
 question: Prints in your wardrobe - what and how many of them?
 answer: don't have any prints, like monotone colors
-question: Jewelry in your wardrobe – what and how many of them?
+question: Jewelry in your wardrobe - what and how many of them?
 answer: little, rare 
-question: Makeup – what do you usually do?
+question: Makeup - what do you usually do?
 answer: just make skin color healty and that's it
 question: Do you have a lot of shoes and do you wear heels?
 answer: i prefer comfortable shoes, i have only one pait with middle heels, i like how it looks like but I can't wear it dur to inconvenience
