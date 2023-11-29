@@ -14,8 +14,10 @@ def create_llm_prompt():
     """
     # Define a system message template for the personal stylist role
     system_message_template = (
-        "You are an experienced personal stylist. Given the following description of the personality, "
-        "please provide a textual description of the style look for the specific goal. Just a set of items, no more."
+        "Age: {age}. Gender: {gender}. "
+        "Psychotype description: {psychotype_description}."
+        "You are an experienced personal stylist. Given the following description of my personality, "
+        "please provide me a textual description of the style look. Just a set of items to wear, no more."
     )
 
     # Create a system message prompt template
@@ -23,9 +25,7 @@ def create_llm_prompt():
 
     # Define a human message template with placeholders for user profile information
     human_message_template = (
-        "Age: {age}. Gender: {gender}. "
-        "Psychotype description: {psychotype_description}."
-        "Please, take into account additional info: {text}"
+        "Please, take into account new additional info: {text}"
     )
 
     # Create a human message prompt template
