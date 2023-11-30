@@ -2,7 +2,9 @@ from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
 from langchain.llms import Replicate
 
 from operator import itemgetter
-from chat.prompt import create_llm_prompt, create_text2image_prompt
+from chat.prompt import create_text2image_prompt, create_llm_stylist_prompt, \
+    create_llm_painter_prompt
+
 
 def create_llm_chain(memory):
     """
@@ -15,15 +17,25 @@ def create_llm_chain(memory):
     - RunnablePassthrough: LangChain pipeline for the personal stylist role.
     """
     # Initialize the LangChain prompt for personal stylist
-    llm_prompt = create_llm_prompt()
+    llm_stylist_prompt = create_llm_stylist_prompt()
 
     # Initialize the Replicate LLM model for generating style look descriptions
 
-    llm = Replicate(
+    llm_stylist = Replicate(
         model="nateraw/mistral-7b-openorca:7afe21847d582f7811327c903433e29334c31fe861a7cf23c62882b181bacb88",
-        input={
+        model_kwargs={
                 "max_new_tokens": 250,
                 "prompt_template": "<|im_start|>system\nYou are an experienced personal stylist. Given the following description of my personality, please provide me a textual description of the style look.\n<|im_end|>\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+        }
+    )
+
+    llm_painter_prompt = create_llm_painter_prompt()
+
+    llm_painter = Replicate(
+        model="nateraw/mistral-7b-openorca:7afe21847d582f7811327c903433e29334c31fe861a7cf23c62882b181bacb88",
+        model_kwargs={
+                "max_new_tokens": 350,
+                "prompt_template": "<|im_start|>system\nYou are an experienced designer and painter.\n<|im_end|>\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
         }
     )
 
@@ -33,8 +45,10 @@ def create_llm_chain(memory):
         RunnablePassthrough.assign(
             history=RunnableLambda(memory.load_memory_variables) | itemgetter("history")
         )
-        | llm_prompt
-        | llm
+        | llm_stylist_prompt
+        | {"style_look_description": llm_stylist}
+        | llm_painter_prompt
+        | llm_painter
     )
     return chain
 
@@ -71,6 +85,6 @@ def create_chain(memory):
     text2image_chain = create_text2image_chain()
 
     # Combine the chains into a single LangChain pipeline
-    chain = {"style look description": llm_chain} | RunnablePassthrough.assign(image=text2image_chain)
+    chain = {"image_description": llm_chain} | RunnablePassthrough.assign(image=text2image_chain)
 
     return chain
