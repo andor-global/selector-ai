@@ -18,7 +18,14 @@ def create_llm_chain(memory):
     llm_prompt = create_llm_prompt()
 
     # Initialize the Replicate LLM model for generating style look descriptions
-    llm = Replicate(model="meta/llama-2-7b-chat:8e6975e5ed6174911a6ff3d60540dfd4844201974602551e10e9e87ab143d81e")
+
+    llm = Replicate(
+        model="nateraw/mistral-7b-openorca:7afe21847d582f7811327c903433e29334c31fe861a7cf23c62882b181bacb88",
+        input={
+                "max_new_tokens": 250,
+                "prompt_template": "<|im_start|>system\nYou are an experienced personal stylist. Given the following description of my personality, please provide me a textual description of the style look.\n<|im_end|>\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+        }
+    )
 
     # Create a LangChain pipeline
     chain = (
