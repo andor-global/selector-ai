@@ -1,9 +1,6 @@
 from langchain.prompts import (
-    PromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
+    PromptTemplate
 )
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 def create_llm_prompt():
     """
