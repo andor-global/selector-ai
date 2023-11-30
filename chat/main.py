@@ -42,7 +42,7 @@ def chat(user_profile_info, memory_state={}):
         })
 
         # Extract style look description and image URL from chain output
-        style_look_description = chain_output['style look description']
+        style_look_description = chain_output['image_description']
         image_url = chain_output['image']
 
         # Display the bot's response
