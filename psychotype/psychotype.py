@@ -1,8 +1,13 @@
+import os
 from pathlib import Path
 from typing import Union
+from dotenv import load_dotenv
 from machine_learning import mistral_model
 import json
 
+dotenv_path = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), "../.env"))
+load_dotenv(dotenv_path)
 
 def load_psychotypes_data():
     with open(Path("./psychotype/psychotypes.json"), 'r') as file:
