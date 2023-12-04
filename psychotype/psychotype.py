@@ -9,6 +9,7 @@ dotenv_path = os.path.abspath(os.path.join(
     os.path.dirname(__file__), "../.env"))
 load_dotenv(dotenv_path)
 
+
 def load_psychotypes_data():
     with open(Path("./psychotype/psychotypes.json"), 'r') as file:
         data = json.load(file)
@@ -50,6 +51,5 @@ def detect_psychotype(answers: str, gender: str, age: int):
 def extract_from_answer(model_answer: str) -> Union[str, None]:
     psycho_types = ['classical', 'expressive', 'dramatic', 'spectacular', 'romantic', 'natural', 'gamine']
     model_answer = model_answer.lower()
-    matching_words = filter(lambda word: word in model_answer, words)
-
+    matching_words = filter(lambda word: word in model_answer, psycho_types)
     return next(matching_words, None)
