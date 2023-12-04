@@ -27,7 +27,7 @@ class Chat():
     def create_stylist_llm_chain(self):
         # Create LangChain pipeline for the personal stylist role
         llm_stylist_prompt = PromptTemplate.from_template(
-            "I'm {age} years old. I'm a {gender}. My personality description is {psychotype_description}. Please, take into account new additional info: {text}")
+            "I'm {age} years old. I'm a {gender}. {personality_description}. Please, take into account new additional info: {text}")
 
         llm_stylist = Replicate(
             model="nateraw/mistral-7b-openorca:7afe21847d582f7811327c903433e29334c31fe861a7cf23c62882b181bacb88",
@@ -81,7 +81,7 @@ class Chat():
             'text': user_input,
             'gender': self.user_profile_info['gender'],
             'age': self.user_profile_info['age'],
-            'psychotype_description': self.user_profile_info['psychotype_description']
+            'personality_description': self.user_profile_info['personality_description']
         })
 
         # Extract style look description from chain output
@@ -92,7 +92,7 @@ class Chat():
             'style_look_description': style_look_description,
             'gender': self.user_profile_info['gender'],
             'age': self.user_profile_info['age'],
-            'psychotype_description': self.user_profile_info['psychotype_description']
+            'personality_description': self.user_profile_info['personality_description']
         })
 
         # Extract image description from chain output
