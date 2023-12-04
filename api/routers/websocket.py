@@ -1,4 +1,5 @@
 import asyncio
+import base64
 from datetime import datetime
 import io
 import os
@@ -8,9 +9,8 @@ from PIL import Image
 from fastapi import APIRouter, Depends, WebSocket
 import requests
 from websockets.exceptions import ConnectionClosed
-from chat.chain import create_chain
+from chat.chat import Chat
 
-from chat.memory import create_memory
 from ..models.user import User
 from ..models.generation import Generation
 from ..middleware import validate_websocket_auth
@@ -24,36 +24,23 @@ async def endpoint(websocket: WebSocket, user_id: str = Depends(validate_websock
     try:
         user = await User.get(user_id)
 
-        memory = create_memory(memory_state={})
-        chain = create_chain(memory)
-
-        chain_input = {
+        user_profile_info = {
             "gender": user.sex,
             "age": user.get_age(),
             "psychotype_description": user.get_psychotype_info()["description"],
         }
 
+        chat = Chat(memory_state={}, user_profile_info=user_profile_info)
+
         while True:
             user_input = await websocket.receive_text()
-            chain_input["text"] = user_input
+            chat_output = chat.execute(user_input)
 
-            # chain_output = chain.invoke(chain_input)
+            await websocket.send_json({"type": "chat", "message": chat_output['style_look_description']})
 
-            chain_output = {
-                "image": "https://replicate.delivery/pbxt/uqfTOONBWL0cTyXkrk6IsBPxYx6QoxGg5QJqN4vAhmNbkxeRA/out-0.png",
-                "image_description": "DESCRIPTION"
-            }
+            await websocket.send_json({"type": "image", "name": chat_output['image_url']})
 
-            style_look_description = chain_output["image_description"]
-            image_url = chain_output["image"]
-
-            await websocket.send_json({"type": "chat", "message": style_look_description})
-
-            memory.save_context({"input": user_input}, {"output": style_look_description})
-
-            await websocket.send_json({"type": "image", "name": image_url})
-
-            asyncio.create_task(save_image(user, image_url))
+            asyncio.create_task(save_image(user, chat_output['image_url']))
     except ConnectionClosed:
         print("connection is closed")
         return ""
@@ -70,11 +57,15 @@ async def save_image(user: User, image_url: str):
 
     image.save(output_path)
 
+    image_buffer = io.BytesIO()
+    image.save(image_buffer, format=image.format if image.format else "PNG")
+    image_base64 = base64.b64encode(image_buffer.getvalue()).decode("utf-8")
+
     generation = Generation(
         user=user,
-        prompt="",
-        name=unique_name
-        image=image
+        prompt=[""],
+        name=unique_name,
+        image=image_base64
     )
 
     await generation.save()

@@ -1,4 +1,5 @@
 from PIL import Image
+from fastapi import WebSocket
 import requests
 import io
 from operator import itemgetter
@@ -6,6 +7,7 @@ from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
 from langchain.llms import Replicate
 from langchain.memory import ConversationBufferMemory
+
 
 class Chat():
     def __init__(self, memory_state, user_profile_info):
@@ -36,12 +38,12 @@ class Chat():
         )
 
         self.chain_stylist = (
-                RunnablePassthrough.assign(
-                    history=RunnableLambda(self.memory.load_memory_variables) | itemgetter("history")
-                )
-                | llm_stylist_prompt
-                | llm_stylist
-                | {"style_look_description": RunnablePassthrough()}
+            RunnablePassthrough.assign(
+                history=RunnableLambda(self.memory.load_memory_variables) | itemgetter("history")
+            )
+            | llm_stylist_prompt
+            | llm_stylist
+            | {"style_look_description": RunnablePassthrough()}
         )
 
     def create_painter_llm_chain(self):
@@ -56,9 +58,9 @@ class Chat():
             }
         )
         self.chain_painter = (
-                llm_painter_prompt
-                | llm_painter
-                | {"image_description": RunnablePassthrough()}
+            llm_painter_prompt
+            | llm_painter
+            | {"image_description": RunnablePassthrough()}
         )
 
     def create_image_generator_chain(self):
@@ -68,60 +70,46 @@ class Chat():
         image_generator = Replicate(
             model="stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b")
         self.image_generator_chain = (
-                image_generator_prompt
-                | image_generator
-                | {"image_url": RunnablePassthrough()}
+            image_generator_prompt
+            | image_generator
+            | {"image_url": RunnablePassthrough()}
         )
 
-    def execute(self):
-        # Main execution loop for the chatbot
-        while True:
-            # Get user input from the console
-            user_input = input('user: ')
+    def execute(self, user_input: str) -> dict:
+        # Invoke the personal stylist chain to get style look description
+        chain_output = self.chain_stylist.invoke({
+            'text': user_input,
+            'gender': self.user_profile_info['gender'],
+            'age': self.user_profile_info['age'],
+            'psychotype_description': self.user_profile_info['psychotype_description']
+        })
 
-            # Invoke the personal stylist chain to get style look description
-            chain_output = self.chain_stylist.invoke({
-                'text': user_input,
-                'gender': self.user_profile_info['gender'],
-                'age': self.user_profile_info['age'],
-                'psychotype_description': self.user_profile_info['psychotype_description']
-            })
+        # Extract style look description from chain output
+        style_look_description = chain_output['style_look_description']
 
-            # Extract style look description from chain output
-            style_look_description = chain_output['style_look_description']
+        # Invoke the painter chain to get image description
+        chain_output = self.chain_painter.invoke({
+            'style_look_description': style_look_description,
+            'gender': self.user_profile_info['gender'],
+            'age': self.user_profile_info['age'],
+            'psychotype_description': self.user_profile_info['psychotype_description']
+        })
 
-            # Invoke the painter chain to get image description
-            chain_output = self.chain_painter.invoke({
-                'style_look_description': style_look_description,
-                'gender': self.user_profile_info['gender'],
-                'age': self.user_profile_info['age'],
-                'psychotype_description': self.user_profile_info['psychotype_description']
-            })
+        # Extract image description from chain output
+        image_description = chain_output['image_description']
 
-            # Extract image description from chain output
-            image_description = chain_output['image_description']
+        # Invoke the image generator chain to get image URL
+        chain_output = self.image_generator_chain.invoke({
+            'image_description': image_description,
+            'gender': self.user_profile_info['gender'],
+            'age': self.user_profile_info['age'],
+        })
 
-            # Invoke the image generator chain to get image URL
-            chain_output = self.image_generator_chain.invoke({
-                'image_description': image_description,
-                'gender': self.user_profile_info['gender'],
-                'age': self.user_profile_info['age'],
-            })
+        # Extract image URL from chain output
+        image_url = chain_output['image_url']
 
-            # Extract image URL from chain output
-            image_url = chain_output['image_url']
+        # Save the conversation context to memory
+        self.memory.save_context({"input": user_input}, {"output": style_look_description})
 
-            # Save the conversation context to memory
-            self.memory.save_context({"input": user_input}, {"output": style_look_description})
-
-            # Display the bot's response
-            print('bot:', style_look_description)
-
-            # Get the image in bytes from the provided URL
-            image_bytes = requests.get(image_url).content
-
-            # Convert bytes to a PIL Image
-            image = Image.open(io.BytesIO(image_bytes))
-
-            # Save the image locally
-            image.save("image.jpg")
+        # Display the bot's response
+        return {'style_look_description': style_look_description, 'image_url': image_url}

@@ -7,6 +7,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from .models.psycho_type import PsychoType
 from .models.user import User
+from .models.generation import Generation
 
 dotenv_path = os.path.abspath(os.path.join(
     os.path.dirname(__file__), "../.env"))
@@ -17,7 +18,7 @@ load_dotenv(dotenv_path)
 async def lifespan(app: FastAPI):
     client = AsyncIOMotorClient(os.getenv("DB_CONNECTION"))
     app.db = client[os.getenv("DB_NAME")]
-    await init_beanie(app.db, document_models=[User, PsychoType])
+    await init_beanie(app.db, document_models=[User, PsychoType, Generation])
     print("Connected to database")
     yield
     client.close()
