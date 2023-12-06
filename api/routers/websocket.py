@@ -57,15 +57,12 @@ async def save_image(user: User, image_url: str):
 
     image.save(output_path)
 
-    image_buffer = io.BytesIO()
-    image.save(image_buffer, format=image.format if image.format else "PNG")
-    image_base64 = base64.b64encode(image_buffer.getvalue()).decode("utf-8")
-
+    encoded_image = base64.b64encode(io.BytesIO(image_bytes).read()).decode('utf-8')
     generation = Generation(
         user=user,
         prompt=[""],
         name=unique_name,
-        image=image_base64
+        image=encoded_image
     )
 
     await generation.save()

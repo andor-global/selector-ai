@@ -1,5 +1,5 @@
 from datetime import datetime
-from beanie import Document, Indexed, Link
+from beanie import Document, Link
 
 from .user import User
 
