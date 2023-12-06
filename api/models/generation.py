@@ -1,11 +1,12 @@
 from datetime import datetime
-from beanie import Document, Indexed
-from beanie.operators import File
+from beanie import Document, Link
+
+from .user import User
 
 
 class Generation(Document):
     user: Link[User]
     prompt: list[str]
     name: str
-    image: File
+    image: str
     created_at: datetime = datetime.utcnow()

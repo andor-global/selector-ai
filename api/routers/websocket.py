@@ -1,4 +1,5 @@
 import asyncio
+import base64
 from datetime import datetime
 import io
 import os
@@ -70,11 +71,12 @@ async def save_image(user: User, image_url: str):
 
     image.save(output_path)
 
+    encoded_image = base64.b64encode(io.BytesIO(image_bytes).read()).decode('utf-8')
     generation = Generation(
         user=user,
-        prompt="",
-        name=unique_name
-        image=image
+        prompt=[""],
+        name=unique_name,
+        image=encoded_image
     )
 
     await generation.save()
