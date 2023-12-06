@@ -10,5 +10,6 @@ COPY ./api /code/api
 COPY ./chat /code/chat
 COPY ./psychotype /code/psychotype
 COPY ./machine_learning /code/machine_learning
+COPY ./static /code/static
 
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "80"]
