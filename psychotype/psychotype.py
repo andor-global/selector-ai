@@ -5,9 +5,6 @@ from dotenv import load_dotenv
 from machine_learning import mistral_model
 import json
 
-dotenv_path = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), "../.env"))
-load_dotenv(dotenv_path)
 
 def load_psychotypes_data():
     with open(Path("./psychotype/psychotypes.json"), 'r') as file:
@@ -33,7 +30,7 @@ def detect_psychotype(answers: str, gender: str, age: int):
               and give a precise exlanation of your decision. For {gender} of {str(age)} age. Here are the answers: {answers}"
 
     prompt_template = "< | im_start | > system "\
-                      +system_prompt+"\
+                      + system_prompt+"\
                       < | im_end | >\
                       < | im_start | > user\
                       {prompt} < | im_end | >\
@@ -53,6 +50,7 @@ def extract_from_answer(model_answer: str) -> Union[str, None]:
     matching_words = filter(lambda word: word in model_answer, psycho_types)
     return next(matching_words, None)
 
+
 def create_personality_decription(psychotype, gender):
     psychotypes_data = load_psychotypes_data()
     gender_data = psychotypes_data[gender]
@@ -70,8 +68,3 @@ def create_personality_decription(psychotype, gender):
     Haircut that may fit me: {hair_makeup_description}"
 
     return personality_description
-
-# psychotype = "classic"
-# gender = 'female'
-# personality_description = create_personality_decription(psychotype, gender)
-# print(personality_description)
