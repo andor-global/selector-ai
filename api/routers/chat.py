@@ -1,32 +1,37 @@
-from fastapi import APIRouter, Depends, Request, File, UploadFile, Form, HTTPException
-from pydantic import BaseModel
-from typing import Optional
-from api.middleware import verify_auth, validate_image
-from ..models.psycho_type import PsychoType
+from fastapi import APIRouter, Depends, Request, HTTPException
+
+from api.middleware import validate_http_auth
+from psychotype.psychotype import detect_psychotype
+from ..models.psycho_type import PsychoType, get_questions_list
+from ..models.user import User
 
 router = APIRouter()
 
-# router.dependencies.append(Depends(verify_auth))
+router.dependencies.append(Depends(validate_http_auth))
 
 
 @router.get("/questions")
 async def get_questions():
-    pass
+    return get_questions_list()
 
 
 @router.post("/answers")
 async def submit_answers(request: Request, answers: list[str]):
     if len(answers) != 19:
-        raise HTTPException("haven't answered all questions")
+        raise HTTPException(status_code=401, detail="haven't answered all questions")
 
-    fields = list(PsychoType._fields.keys())
-    psychoType = PsychoType()
+    user = await User.get(request.state.user_id)
+
+    psychoType = PsychoType(user=user)
+    fields = list(psychoType.model_dump().keys())[2:]
 
     for i in range(len(answers)):
-        psychoType[fields[i]] = answers[i]
+        setattr(psychoType, fields[i], answers[i])
 
-    psychoType.save()  # use await if needed later in the code
+    await psychoType.save()
 
-    # give psychotype answers to AI and get back psychotype answer. then save in user
+    detected_type = detect_psychotype(psychoType.to_string(), user.sex, user.get_age())
+    user.psycho_type = detected_type
+    await user.save()
 
-    return psychoType.to_string()
+    return {"message": detected_type}

@@ -1,46 +1,42 @@
-from mongoengine import *
-from mongoengine import signals
+from datetime import datetime
+from enum import Enum, auto
 import json
-from enum import Enum
-from typing import Union
-import bcrypt
+import os
+from pathlib import Path
+from typing import Optional
+from beanie import Document, Indexed
 
 
-class Sex(Enum):
+class Sex(str, Enum):
     Male = "male"
     Female = "female"
 
 
-class PsychoType(Enum):
-    Classical, Expressive, Dramatic, Spectacular, Romantic, Natural, Gamine = range(
-        7)
+class PsychoType(str, Enum):
+    Classical = "classical"
+    Expressive = "expressive"
+    Dramatic = "dramatic"
+    Spectacular = "spectacular"
+    Romantic = "romantic"
+    Natural = "natural"
+    Gamine = "gamine"
 
 
 class User(Document):
-    email = StringField(unique=True, required=True)
-    name = StringField(required=True)
-    password = StringField(required=True)
-    birth_day = DateField(required=True)
-    sex = EnumField(Sex)
-    psycho_type = EnumField(PsychoType)
-    style_goal = StringField()
+    email: Indexed(str, unique=True)
+    name: str
+    password: str
+    birth_day: datetime
+    sex: Sex
+    psycho_type: Optional[str] = ''
 
+    def get_age(self) -> int:
+        today = datetime.utcnow()
+        age = today.year - self.birth_day.year - ((today.month, today.day) < (self.birth_day.month, self.birth_day.day))
+        return age
 
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)
-
-
-def hash_password(sender, document):
-    if document.password:
-        hashed_password = bcrypt.hashpw(
-            document.password.encode('utf-8'), bcrypt.gensalt())
-        document.password = hashed_password.decode('utf-8')
-
-
-@signals.pre_save.connect
-def user_pre_save(sender, document):
-    if isinstance(document, User):
-        hash_password(sender, document)
+    def get_psychotype_info(self) -> dict:
+        path = Path(__file__).resolve().parent / Path("../../psychotype/psychotypes.json")
+        with open(path, 'r') as file:
+            data = json.load(file)
+            return data[self.sex][self.psycho_type]

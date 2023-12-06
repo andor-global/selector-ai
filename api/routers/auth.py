@@ -1,12 +1,10 @@
 import os
-from datetime import date, datetime, timedelta
+import bcrypt
+from datetime import date
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel, EmailStr, validator, constr
 from jwt import encode as jwt_encode
-import bcrypt
 from ..models.user import User
-from mongoengine.queryset import DoesNotExist
-from mongoengine.errors import NotUniqueError
 
 router = APIRouter()
 
@@ -40,10 +38,14 @@ class RegisterInfo(BaseModel):
         return sex
 
 
-@router.post("/login", responses={401: {"description": "Item not found"}})
+@router.post("/login")
 async def handle_login(loginInfo: LoginInfo, response: Response):
     try:
-        user = User.objects.get(email=loginInfo.email)
+        user = await User.find_one({'email': loginInfo.email})
+
+        if not user:
+            raise Exception("Email doesn't exist")
+
         if bcrypt.checkpw(loginInfo.password.encode("utf-8"), user.password.encode("utf-8")):
             payload = {
                 "user_id": str(user.id),
@@ -56,46 +58,49 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
                 key="auth_token",
                 value=token,
                 samesite="none",
-                httponly=True,
                 secure=True,
                 expires=3 * 24 * 60 * 60
             )
 
             return {"message": "Successful login"}
         else:
-            raise DoesNotExist("Wrong password")
-    except DoesNotExist:
+            raise Exception("Wrong password")
+    except Exception:
         raise HTTPException(
             status_code=401, detail="Email or Password is incorrect")
 
 
 @router.post("/register")
 async def handle_register(registerInfo: RegisterInfo, response: Response):
-    try:
-        user = User(
-            name=registerInfo.name,
-            email=registerInfo.email,
-            password=registerInfo.password,
-            birth_day=registerInfo.birth_day,
-            sex=registerInfo.sex
-        )
+    user = await User.find_one(User.email == registerInfo.email)
 
-        user.save()
-
-        payload = {
-            "user_id": str(user.id),
-        }
-
-        token = jwt_encode(payload, os.getenv("JWT_SECRET"), algorithm="HS256")
-        response.set_cookie(
-            key="auth_token",
-            value=token,
-            samesite="none",
-            httponly=True,
-            secure=True,
-            expires=3 * 24 * 60 * 60
-        )
-
-        return {"message": "Successful registration"}
-    except NotUniqueError:
+    if user != None:
         raise HTTPException(status_code=401, detail="Email already exists")
+
+    hashed_password = bcrypt.hashpw(registerInfo.password.encode('utf-8'), bcrypt.gensalt())
+
+    user = User(
+        name=registerInfo.name,
+        email=registerInfo.email,
+        password=hashed_password.decode('utf-8'),
+        birth_day=registerInfo.birth_day,
+        sex=registerInfo.sex,
+        psycho_type=None
+    )
+
+    await user.save()
+
+    payload = {
+        "user_id": str(user.id),
+    }
+
+    token = jwt_encode(payload, os.getenv("JWT_SECRET"), algorithm="HS256")
+    response.set_cookie(
+        key="auth_token",
+        value=token,
+        samesite="none",
+        secure=True,
+        expires=3 * 24 * 60 * 60
+    )
+
+    return {"message": "Successful registration"}
