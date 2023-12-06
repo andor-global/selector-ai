@@ -2,16 +2,16 @@ FROM python:3.12
 
 WORKDIR /code
 
-COPY requirements.txt requirements.txt
+COPY ./requirements.txt /code/requirements.txt
 
 RUN apt-get update && \
     apt-get install -y gcc
 
-RUN pip install --no-cache-dir -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-COPY ./api .
-COPY ./chat .
-COPY ./psychotype .
-COPY ./machine_learning .
+COPY ./api /code/api
+COPY ./chat /code/chat
+COPY ./psychotype /code/psychotype
+COPY ./machine_learning /code/machine_learning
 
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "80"]
