@@ -4,6 +4,9 @@ WORKDIR /code
 
 COPY requirements.txt requirements.txt
 
+RUN apt-get update && \
+    apt-get install -y gcc
+    
 RUN pip install --no-cache-dir -r /code/requirements.txt
 
 COPY ./api /api

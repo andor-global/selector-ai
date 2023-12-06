@@ -72,7 +72,7 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
 
 @router.post("/register")
 async def handle_register(registerInfo: RegisterInfo, response: Response):
-    user = await User.find_one({"email": registerInfo.email})
+    user = await User.find_one(User.email == registerInfo.email)
 
     if user != None:
         raise HTTPException(status_code=401, detail="Email already exists")
