@@ -27,7 +27,7 @@ async def endpoint(websocket: WebSocket, user_id: str = Depends(validate_websock
         user_profile_info = {
             "gender": user.sex,
             "age": user.get_age(),
-            "psychotype_description": user.get_psychotype_info()["description"],
+            "personality_description": user.get_psychotype_info()["description"],
         }
 
         chat = Chat(memory_state={}, user_profile_info=user_profile_info)

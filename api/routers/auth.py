@@ -62,7 +62,7 @@ async def handle_login(loginInfo: LoginInfo, response: Response):
                 expires=3 * 24 * 60 * 60
             )
 
-            return {"message": "Successful login"}
+            return {"message": "Successful login", "auth_token": token}
         else:
             raise Exception("Wrong password")
     except Exception:
@@ -103,4 +103,4 @@ async def handle_register(registerInfo: RegisterInfo, response: Response):
         expires=3 * 24 * 60 * 60
     )
 
-    return {"message": "Successful registration"}
+    return {"message": "Successful registration", "auth_token": token}
