@@ -7,8 +7,6 @@ from ..models.user import User
 
 router = APIRouter()
 
-router.dependencies.append(Depends(validate_http_auth))
-
 
 @router.get("/questions")
 async def get_questions():
@@ -16,11 +14,11 @@ async def get_questions():
 
 
 @router.post("/answers")
-async def submit_answers(request: Request, answers: list[str]):
+async def submit_answers(request: Request, answers: list[str], user_id: str = Depends(validate_http_auth)):
     if len(answers) != 19:
         raise HTTPException(status_code=401, detail="haven't answered all questions")
 
-    user = await User.get(request.state.user_id)
+    user = await User.get(user_id)
 
     psychoType = PsychoType(user=user)
     fields = list(psychoType.model_dump().keys())[2:]

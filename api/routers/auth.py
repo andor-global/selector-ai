@@ -1,6 +1,6 @@
 import os
 import bcrypt
-from datetime import date
+from datetime import date, datetime, timedelta
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel, EmailStr, validator, constr
 from jwt import encode as jwt_encode
@@ -104,3 +104,16 @@ async def handle_register(registerInfo: RegisterInfo, response: Response):
     )
 
     return {"message": "Successful registration", "auth_token": token}
+
+
+@router.post("/logout")
+async def logout(response: Response):
+    response.set_cookie(
+        key="auth_token",
+        value="",
+        samesite="none",
+        secure=True,
+        expires=0,
+    )
+
+    return {"message": "Sucessful logout"}
