@@ -10,7 +10,7 @@ def get_bytes_image(file):
     file_bytes = bytearray(file.read())
     return file_bytes
 
-st.markdown('<a href="https://selector-ai.onrender.com/"><img src="https://i.imgur.com/a/84LFqpx.jpg" width="700"></a>', unsafe_allow_html=True)
+st.markdown('<a href="https://selector-ai.onrender.com/"><img src="https://i.imgur.com/2ewASpg.jpg" width="700"></a>', unsafe_allow_html=True)
 
 # Title of the web app
 st.markdown('<h1 style="font-size: 24px;">Generate New Look With Selector AI</h1>', unsafe_allow_html=True)
