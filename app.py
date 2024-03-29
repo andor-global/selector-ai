@@ -10,10 +10,10 @@ def get_bytes_image(file):
     file_bytes = bytearray(file.read())
     return file_bytes
 
-st.markdown('<a href="https://genl.webflow.io/"><img src="https://i.imgur.com/8HFaK0v.jpg" width="700"></a>', unsafe_allow_html=True)
+st.markdown('<a href="https://selector-ai.onrender.com/"><img src="https://imgur.com/a/84LFqpx" width="700"></a>', unsafe_allow_html=True)
 
 # Title of the web app
-st.markdown('<h1 style="font-size: 24px;">Generate New Look</h1>', unsafe_allow_html=True)
+st.markdown('<h1 style="font-size: 24px;">Generate New Look With Selector AI</h1>', unsafe_allow_html=True)
 
 # Gender
 gender = st.selectbox("Select Gender", ["Male", "Female", "Non-binary"])
