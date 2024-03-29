@@ -8,7 +8,6 @@ def create_url(image):
     url = "https://api.imgur.com/3/image"
     headers = {"Authorization": "Client-ID "+st.secrets["imgur_cliend_id"]}
 
-
     # Read image file and encode as base64
     buffered = BytesIO()
     image.save(buffered, format="JPEG")

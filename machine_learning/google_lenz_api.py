@@ -26,7 +26,7 @@ def parse_api_results(results):
     try:
       prices.append(item['price']['value'])
     except:
-      prices.append(None)
+      continue
     try:
       thumbnails.append(item['thumbnail'])
     except:
@@ -43,9 +43,5 @@ def parse_api_results(results):
   currency = [re.search(r'([^\d.]*)', price).group(0) for price in prices]
   data = {'pic': thumbnails, 'title': titles, 'price': prices, 'currency': currency, 'link': links}
   df = pd.DataFrame(data=data)
-  df_with_prices = df[~df['price'].isna()]
-  df_with_no_prices = df[df['price'].isna()]
-  if len(df_with_prices) != 0:
-     df_with_prices["price"] = df_with_prices["price"].str.replace(r'[^\d.]*', '', regex=True)
-  df = pd.concat(df_with_prices, df_with_no_prices)
+  df["price"] = df["price"].str.replace(r'[^\d.]*', '', regex=True)
   return df

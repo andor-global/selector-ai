@@ -1,86 +1,45 @@
-# genl
-
+# genL
 Generate New Look
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Project Structure](#project-structure)
+- [Project Overview](#project-overview)
+- [Directory Structure](#directory-structure)
 - [Getting Started](#getting-started)
-  - [Setting up environment in Windows (WSL)](#setting-up-environment-in-windows)
-  - [Docker](#docker)
 - [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Overview
+## Project Overview
 
-GENL is an essential part of your daily routine designed for creating your looks and style based on your personality.
-We understand that fashion isn't just about what you wear, it is a reflection of who you are.
+GENL is an essential part of your daily routine designed for creating your looks and style based on your personality. 
+We understand that fashion isn't just about what you wear, it is a reflection of who you are. 
 That's why we've created a platform you'll want to use every day, to simplify your style and shopping journey, and empower your individuality, all driven by cutting-edge AI technology.
 
-## Project Structure
+## Directory Structure
 
 This project follows a specific directory structure:
 
-- `/api`: API for interacting with model
-  - `/models`: Contains the mongodb models and logic
-  - `/routers`: API routers for handling requests
-- `/machine_learning`: Contains machine learning code and notebooks
-- `/tests`: Automated testing for the model
-- `app.py`: Entry point for streamlit app
-- `requirements.txt`: Python package requirements
+
+- `/web`: Contains web design files.
+- `/machine-learning`: Contains machine learning code and notebooks.
+- `README.md`: This file with project documentation.
+- `LICENSE`: License file (mention the license you chose).
+- `requirements.txt`: Python package requirements.
+- `.gitignore`: Files and directories to be ignored by Git.
 
 ## Getting Started
 
-### Setting up environment in Windows
+Provide instructions on how to get started with your project. Include prerequisites, installation steps, and any initial setup required. Be sure to cover:
 
-- NOTE: Some requirements are only available on Unix based OS. If you are on Windows. either use PyCharm, Docker or WSL.
-- [How to install WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
-
-After installing WSL Ubuntu, update the package list, install pip and [virtualenv](https://pypi.org/project/virtualenv/).
-
-```bash
-$ sudo apt update
-$ sudo apt-get install python3-pip
-$ sudo pip install virtualenv
-```
+- Prerequisites (e.g., Python, dependencies)
+- Installation instructions
+- Configuration steps (if any)
 
 ```bash
-# after installing wsl start the virtual machine
-$ wsl
-$ git clone https://github.com/GENLapp/genl.git
-$ cd genl
-# create virtual environment for python
-$ virtualenv venv
-# enter the virtual environment
-$ source ./venv/bin/activate
-$ pip install -r requirements.txt
-$ uvicorn api.main:app --reload
-```
+# Example installation steps
+git clone git@github.com:GENLapp/genL.git
+cd your-repo
+pip install -r requirements.txt
 
-### Docker
 
-After cloning the repository simply run:
-
-- `docker-compose build`: to build the container
-- `docker-compose up`: to start the container
-- `docker-compose down`: to stop the containcer
-
-## Usage
-
-### Run Dev Server
-
-```bash
-uvicorn api.main:app --reload
-```
-
-### Run Model
-
-```bash
-# command to only run the model
-```
-
-### Test the Model
-
-```bash
-# run automated tests for the model
-```
